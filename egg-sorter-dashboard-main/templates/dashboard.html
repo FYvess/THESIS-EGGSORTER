@@ -1,0 +1,367 @@
+{% extends 'base.html' %} {% block content %}
+<div class="pagetitle">
+  <h1>Dashboard</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+  </nav>
+</div>
+<section class="section dashboard">
+  <div class="row">
+    <!-- Left side columns -->
+    <div class="col-lg-8">
+      <div class="row">
+        <!-- Sales Card -->
+        <div class="col-xxl-3 col-md-3">
+          <div class="card info-card sales-card">
+            <div class="card-body">
+              <h5 class="card-title">Total Eggs</h5>
+              <div class="ps-3">
+                <h6>{{ total_eggs }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-md-3">
+          <div class="card info-card sales-card">
+            <div class="card-body">
+              <h5 class="card-title">Daily Eggs</h5>
+              <div class="ps-3">
+                <h6>{{ daily_eggs }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-md-3">
+          <div class="card info-card sales-card">
+            <div class="card-body">
+              <h5 class="card-title">Weekly Eggs</h5>
+              <div class="ps-3">
+                <h6>{{ weekly_eggs }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xxl-3 col-md-3">
+          <div class="card info-card sales-card">
+            <div class="card-body">
+              <h5 class="card-title">Monthly eggs</h5>
+              <div class="ps-3">
+                <h6>{{ monthly_eggs }}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- End Sales Card -->
+        <!-- Reports -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Reports</h5>
+
+              <!-- Line Chart -->
+              <div id="reportsChart"></div>
+              <script id="eggs-data" type="application/json">
+                {{ eggs | tojson | safe }}
+              </script>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  const eggsData = JSON.parse(
+                    document.getElementById("eggs-data").textContent
+                  );
+                  const totalEggs = eggsData.length;
+                  let cumulativeCount = 0;
+                  const weightSeriesData = eggsData.map((egg) => {
+                    cumulativeCount++;
+                    return {
+                      x: new Date(egg.created_at).getTime(), // Use timestamp for datetime axis
+                      y: cumulativeCount,
+                    };
+                  });
+
+                  // Sort data by date ascending - ApexCharts often prefers this
+                  weightSeriesData.sort((a, b) => a.x - b.x);
+
+                  const options = {
+                    // 1. Series configuration
+                    series: [
+                      {
+                        name: "Total Eggs", // More descriptive name
+                        data: weightSeriesData,
+                      },
+                    ],
+
+                    // 2. Chart Type and Appearance
+                    chart: {
+                      type: "line", // Line chart is often better for time-series data points
+                      height: 350,
+                      zoom: {
+                        // Enable zooming        enabled: true,
+                        type: "x",
+                        autoScaleYaxis: true, // Adjust Y-axis when zooming X
+                      },
+                      toolbar: {
+                        // Enable toolbar for zoom, pan, export
+                        show: false,
+                        tools: {
+                          download: true,
+                          selection: true,
+                          zoom: true,
+                          zoomin: true,
+                          zoomout: true,
+                          pan: true,
+                          reset:
+                            true |
+                            '<img src="/static/icons/reset.png" width="20">', // Optional custom icon
+                          customIcons: [],
+                        },
+                        autoSelected: "zoom",
+                      },
+                    },
+
+                    // 4. Stroke (Line Appearance)
+                    stroke: {
+                      curve: "smooth", // Smoother line visually
+                      width: 2, // Line thickness
+                    },
+                    // 6. Tooltip Enhancements
+                    tooltip: {
+                      enabled: true,
+                      x: {
+                        format: "dd MMM yyyy, HH:mm", // Clearer date/time format
+                        // Use 'dd MMM yy, HH:mm' for shorter year
+                      },
+                      y: {
+                        formatter: function (val) {
+                          return val.toFixed(1); // Add unit and format decimal
+                        },
+                        title: {
+                          // Consistent naming in tooltip
+                          formatter: (seriesName) => seriesName + ":",
+                        },
+                      },
+                      marker: {
+                        show: true,
+                      },
+                    },
+
+                    // 7. X-Axis Configuration
+                    xaxis: {
+                      type: "datetime", // Correct type for time series
+                      labels: {
+                        datetimeUTC: false, // Display in local time if server sends local time
+                        format: "dd MMM HH:mm", // Format for axis labels (adjust detail as needed)
+                      },
+                      title: {
+                        text: "Time Sorted", // Add axis title
+                        style: {
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#555",
+                        },
+                      },
+                      tooltip: {
+                        // Prevent default x-axis tooltip competing with main tooltip
+                        enabled: false,
+                      },
+                    },
+
+                    // 8. Y-Axis Configuration
+                    yaxis: {
+                      title: {
+                        text: "Total Eggs", // Add axis title
+                        style: {
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#555",
+                        },
+                      },
+                      labels: {
+                        formatter: function (val) {
+                          return val.toFixed(1); // Consistent formatting
+                        },
+                      },
+                    },
+
+                    // 9. Grid Appearance
+                    grid: {
+                      borderColor: "#e7e7e7",
+                      row: {
+                        colors: ["#f3f3f3", "transparent"], // Zebra striping
+                        opacity: 0.5,
+                      },
+                    },
+                    // 11. Legend (Keep if needed, often redundant for single series)
+                    legend: {
+                      position: "top",
+                      horizontalAlign: "right",
+                      floating: true,
+                      offsetY: -25,
+                      offsetX: -5,
+                    },
+                  };
+
+                  const chart = new ApexCharts(
+                    document.querySelector("#reportsChart"),
+                    options
+                  );
+                  chart.render();
+                });
+              </script>
+              <!-- End Line Chart -->
+            </div>
+          </div>
+        </div>
+        <!-- End Reports -->
+
+        <!-- Recent Sales -->
+        <div class="col-12">
+          <div class="card recent-sales overflow-auto">
+            <div class="card-body">
+              <h5 class="card-title">Recent Eggs</h5>
+
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Weight (g)</th>
+                    <th scope="col">Collected On</th>
+                    <th scope="col">Expiry Date</th>
+                  </tr>
+                </thead>
+                <tbody id="eggs-table-body"></tbody>
+              </table>
+
+              <script>
+                const eggsData = JSON.parse(
+                  document.getElementById("eggs-data").textContent
+                );
+
+                const recentEggs = eggsData
+                  .sort(
+                    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+                  )
+                  .slice(0, 5);
+
+                const tableBody = document.getElementById("eggs-table-body");
+
+                recentEggs.forEach((egg) => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                        <th scope="row">#${egg.id}</th>
+                        <td>${egg.size}</td>
+                        <td>${egg.weight.toFixed(2)} g</td>
+                        <td>${new Date(
+                          egg.created_at
+                        ).toLocaleDateString()}</td>
+                        <td>${new Date(
+                          egg.expected_expiry
+                        ).toLocaleDateString()}</td>
+                    `;
+                  tableBody.appendChild(row);
+                });
+              </script>
+            </div>
+          </div>
+        </div>
+        <!-- End Recent Sales -->
+      </div>
+    </div>
+    <!-- End Left side columns -->
+
+    <!-- Right side columns -->
+    <div class="col-lg-4">
+      <!-- Website Traffic -->
+      <div class="card">
+        <div class="card-body pb-0">
+          <h5 class="card-title">Egg Sorted <span></span></h5>
+
+          <div id="trafficChart" style="min-height: 390px" class="echart"></div>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", async () => {
+              // Fetch the data from the server
+              const response = await fetch("/chart-data");
+              const chartData = await response.json();
+              console.log(chartData);
+
+              echarts.init(document.querySelector("#trafficChart")).setOption({
+                tooltip: {
+                  trigger: "item",
+                },
+                legend: {
+                  top: "5%",
+                  left: "center",
+                },
+                series: [
+                  {
+                    name: "Size:",
+                    type: "pie",
+                    radius: ["40%", "70%"],
+                    avoidLabelOverlap: false,
+                    label: {
+                      show: false,
+                      position: "center",
+                    },
+                    emphasis: {
+                      label: {
+                        show: true,
+                        fontSize: "18",
+                        fontWeight: "bold",
+                      },
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                    data: chartData,
+                  },
+                ],
+              });
+            });
+          </script>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body pb-0">
+          <h5 class="card-title">Egg Sorted</h5>
+
+          <div id="barChart" style="min-height: 270px" class="echart"></div>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", async () => {
+              const response = await fetch("/chart-data-2");
+              const chartData = await response.json();
+              console.log(chartData);
+
+              echarts.init(document.querySelector("#barChart")).setOption({
+                xAxis: {
+                  type: "category",
+                  data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                },
+                yAxis: {
+                  type: "value",
+                },
+                series: [
+                  {
+                    data: chartData.data,
+                    type: "bar",
+                  },
+                ],
+              });
+            });
+          </script>
+        </div>
+      </div>
+
+      <!-- End Website Traffic -->
+    </div>
+
+    <!-- End Right side columns -->
+  </div>
+</section>
+{% endblock %}

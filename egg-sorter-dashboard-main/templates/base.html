@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/datatables.css') }}"
+    />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <a href="/" class="logo d-flex align-items-center">
+          <img src="assets/img/logo.png" alt="" />
+          <span class="d-none d-lg-block">Egg Sorter</span>
+        </a>
+      </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.endpoint == 'index' %}active{% else %}collapsed{% endif %}"
+            href="{{ url_for('index') }}"
+          >
+            <i class="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <!-- End Dashboard Nav -->
+        <li class="nav-item">
+          <a
+            class="nav-link {% if request.endpoint == 'inventory' %}active{% else %}collapsed{% endif %}"
+            href="{{ url_for('inventory') }}"
+          >
+            <i class="bi bi-menu-button-wide"></i>
+            <span>Inventory</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link collapsed"
+            href="{{ url_for('logout') }}"
+          >
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+        <!-- End Components Nav -->
+      </ul>
+    </aside>
+    <!-- End Sidebar-->
+
+    <main id="main" class="main">{% block content %}{% endblock %}</main>
+    <!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+      <div class="copyright"></div>
+    </footer>
+    <!-- End Footer -->
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/apexcharts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/DataTables/datatables.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+  </body>
+</html>

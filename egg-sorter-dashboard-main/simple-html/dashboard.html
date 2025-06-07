@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/datatable.css" />
+    <script src="js/sql.js"></script>
+
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+        <a href="/" class="logo d-flex align-items-center">
+          <img src="assets/img/logo.png" alt="" />
+          <span class="d-none d-lg-block">Egg Sorter</span>
+        </a>
+      </div>
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="dashboard.html">
+            <i class="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <!-- End Dashboard Nav -->
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="inventory.html">
+            <i class="bi bi-menu-button-wide"></i>
+            <span>Inventory</span>
+          </a>
+        </li>
+        <!-- End Components Nav -->
+      </ul>
+    </aside>
+    <!-- End Sidebar-->
+
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ol>
+        </nav>
+      </div>
+      <section class="section dashboard">
+        <div class="row">
+          <!-- Left side columns -->
+          <div class="col-lg-8">
+            <div class="row">
+              <!-- Sales Card -->
+              <div class="col-xxl-3 col-md-3">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Total Eggs</h5>
+                    <div class="ps-3" >
+                      <h6 id="total-eggs"></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-3 col-md-3">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Daily Eggs</h5>
+                    <div class="ps-3">
+                      <h6 id="daily-eggs">1</h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-3 col-md-3">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Weekly Eggs</h5>
+                    <div class="ps-3">
+                      <h6 id="weekly-eggs"></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-3 col-md-3">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Monthly eggs</h5>
+                    <div class="ps-3">
+                      <h6 id="monthly-eggs"></h6>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- End Sales Card -->
+              <!-- Reports -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Reports</h5>
+
+                    <!-- Line Chart -->
+                    <div id="reportsChart"></div>
+                    <!-- End Line Chart -->
+                  </div>
+                </div>
+              </div>
+              <!-- End Reports -->
+
+              <!-- Recent Sales -->
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                  <div class="card-body">
+                    <h5 class="card-title">Recent Eggs</h5>
+
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Size</th>
+                          <th scope="col">Weight (g)</th>
+                          <th scope="col">Collected On</th>
+                          <th scope="col">Expiry Date</th>
+                        </tr>
+                      </thead>
+                      <tbody id="eggs-table-body"></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!-- End Recent Sales -->
+            </div>
+          </div>
+          <!-- End Left side columns -->
+
+          <!-- Right side columns -->
+          <div class="col-lg-4">
+            <!-- Website Traffic -->
+            <div class="card">
+              <div class="card-body pb-0">
+                <h5 class="card-title">Egg Sorted <span></span></h5>
+
+                <div
+                  id="trafficChart"
+                  style="min-height: 390px"
+                  class="echart"
+                ></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body pb-0">
+                <h5 class="card-title">Egg Sorted</h5>
+
+                <div
+                  id="barChart"
+                  style="min-height: 270px"
+                  class="echart"
+                ></div>
+              </div>
+            </div>
+
+            <!-- End Website Traffic -->
+          </div>
+
+          <!-- End Right side columns -->
+        </div>
+      </section>
+    </main>
+    <!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+      <div class="copyright"></div>
+    </footer>
+    <!-- End Footer -->
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/apexcharts.min.js"></script>
+    <script src="js/simple-datatables.js"></script>
+    <script src="main.js" defer></script>
+  </body>
+</html>
